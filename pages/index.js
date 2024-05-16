@@ -1,15 +1,22 @@
-import { accumulated } from "../models/accumulated";
-import { contribution } from "../models/contribution";
-import { timeWindow } from "../models/timeWindow";
+import { useEffect, useState } from "react";
+import { createData } from "../src/models/createData";
+import Input from "../src/components/Input/Input";
+import Form from "../src/components/Form/Form";
+import Table from "../src/components/Table/Table";
+import Charts from "../src/components/Chart/Charts";
 
 const Home = function () {
-  // console.log(timeWindow(2));
-  const contributions = contribution(2, 1000, 0.045, 0.05);
-  console.log(contributions);
+  const [data, setData] = useState([]);
 
-  console.log(accumulated(contributions, 35000));
+  useEffect(() => {}, [data]);
 
-  return <h1>Initial Page</h1>;
+  return (
+    <>
+      <Form setData={setData} />
+      <Charts data={data} />
+      <Table data={data} />
+    </>
+  );
 };
 
 export default Home;

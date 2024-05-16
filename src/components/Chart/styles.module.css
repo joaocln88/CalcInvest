@@ -1,0 +1,8 @@
+.chart {
+  border-collapse: collapse;
+  margin: auto;
+  font-size: 0.9rem;
+  min-width: 25rem;
+  border-radius: 5px 5px 0 0;
+  overflow: hidden;
+}
