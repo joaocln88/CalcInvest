@@ -1,10 +1,10 @@
 const parseData = (inputData) => {
   let {
     initial_amount,
-    contribution,
+    initial_contribution,
     rate_of_return,
-    rate_of_return_len,
     duration,
+    //rate_of_return_len,
     duration_len,
     inflation,
     inflation_len,
@@ -16,28 +16,28 @@ const parseData = (inputData) => {
   return {
     initialAmount: parseFloat(initial_amount),
 
-    contribution: parseFloat(contribution),
+    initialContribution: parseFloat(initial_contribution),
 
     rateOfReturn: parseFloat(rate_of_return) / 100,
 
-    rateOfReturnLen: rate_of_return_len,
-
     duration: parseInt(duration),
 
-    durationLen: duration_len,
+    //rateOfReturnLen: rate_of_return_len,
 
-    inflation: parseFloat(inflation) / 100,
+    // durationLen: duration_len,
 
-    inflationLen: inflation_len,
+    // inflation: parseFloat(inflation) / 100,
 
-    contributionInflationIncrease: contribution_inflation_increase ? 1 : 0,
+    // inflationLen: inflation_len,
 
-    contributionIncrease: contribution_increase ? 1 : 0,
+    // contributionInflationIncrease: contribution_inflation_increase ? 1 : 0,
 
-    contributionIncreaseValue:
-      contribution_increase_value === ""
-        ? 0
-        : parseFloat(contribution_increase_value) / 100,
+    // contributionIncrease: contribution_increase ? 1 : 0,
+
+    // contributionIncreaseValue:
+    //   contribution_increase_value === ""
+    //     ? 0
+    //     : parseFloat(contribution_increase_value) / 100,
   };
 };
 

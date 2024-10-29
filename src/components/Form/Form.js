@@ -4,41 +4,18 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 import { createData } from "../../models/createData";
+import parseData from "src/models/parseData";
 import styles from "./styles.module.css";
 import FormBasic from "../FormBasic/FormBasic";
 import FormAdvanced from "../FormAdvanced/FormAdvanced";
 import { formFields } from "./formFields";
-
-//Extract default values from form fields:
-const defaultValuesArr = formFields.reduce((acc, curr) => {
-  const tempArr = [];
-  if ("input" in curr) {
-    tempArr.push({
-      [curr.input.name]: curr.input.defaultValue,
-    });
-  }
-  if ("select" in curr) {
-    tempArr.push({
-      [curr.select.name]: curr.select.defaultValue,
-    });
-  }
-  if ("checkbox" in curr) {
-    tempArr.push({
-      [curr.checkbox.name]: curr.checkbox.defaultValue,
-    });
-  }
-  return [...acc, ...tempArr];
-}, []);
-
-//Set default values to expected format on YUP
-const defaultValues = Object.assign({}, ...defaultValuesArr);
 
 const schema = yup.object({
   initial_amount: yup
     .string()
     .required("Campo necessário")
     .matches(/^\d+(\.\d{1,2})?$/, "Valor ou formato inválido"),
-  contribution: yup
+  initial_contribution: yup
     .string()
     .required("Campo necessário")
     .matches(/^\d+(\.\d{1,2})?$/, "Valor ou formato inválido"),
@@ -53,31 +30,21 @@ const schema = yup.object({
     .string()
     .required("Campo necessário")
     .matches(/^[1-9]\d*$/, "Valor ou formato inválido"),
-  inflation: yup
-    .string()
-    .matches(
-      /^(\d{0,2}(\.\d{1,2})?|100(\.00?)?)$/,
-      "Valor ou formato inválido",
-    ),
-  contribution_increase_value: yup
-    .string()
-    .matches(
-      /^(\d{0,2}(\.\d{1,2})?|100(\.00?)?)$/,
-      "Valor ou formato inválido",
-    ),
 });
 
 const Form = ({ setData }) => {
   const methods = useForm({
-    defaultValues,
     resolver: yupResolver(schema),
   });
   const { register, watch, handleSubmit } = methods;
 
   const watchAdvanced = watch("advanced", false);
 
-  const onSubmit = (data) => {
-    setData(createData(data));
+  const onSubmit = (inputData) => {
+    const parsedInputData = parseData(inputData);
+    const data = createData(parsedInputData);
+    console.log({ data });
+    setData(data);
   };
 
   return (
@@ -91,7 +58,7 @@ const Form = ({ setData }) => {
             <label id="advanced">Explorar recursos avançadas</label>
           </div> */}
 
-          {watchAdvanced && <FormAdvanced formFields={formFieldsAdvanced} />}
+          {/* {watchAdvanced && <FormAdvanced formFields={formFieldsAdvanced} />} */}
           <input type="submit" className={styles.button} />
         </form>
       </FormProvider>

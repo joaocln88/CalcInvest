@@ -9,6 +9,7 @@ import {
   CartesianGrid,
   Tooltip,
   ReferenceLine,
+  ReferenceDot,
 } from "recharts";
 
 const Charts = ({ data }) => {
@@ -31,21 +32,22 @@ const Charts = ({ data }) => {
               <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
             </linearGradient>
           </defs>
-          <XAxis dataKey="month_id" interval={24} />
+          <XAxis dataKey="month" interval={24} />
           <YAxis />
           <Tooltip />
           <CartesianGrid strokeDasharray="3 3 " />
-          <ReferenceLine y={1000000} stroke="red" label="1M" />
+          {/* <ReferenceLine y={1000000} stroke="red" label="1M" /> */}
+          <ReferenceDot />
           <Area
             type="monotone"
-            dataKey="total"
+            dataKey="total_accumulated"
             stroke="#82ca9d"
             fillOpacity={1}
             fill="url(#colorPv)"
           />
           <Area
             type="monotone"
-            dataKey="accumulated"
+            dataKey="accumulated_contribution"
             stroke="#8884d8"
             fillOpacity={1}
             fill="url(#colorUv)"

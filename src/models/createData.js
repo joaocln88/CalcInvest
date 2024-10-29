@@ -1,60 +1,71 @@
-import { arrToObjArr } from "./arrToObjArr";
-import { createAccumArray } from "./createAccumArray";
-import { createContributionArray } from "./createContributionArray";
-import { createDateArray } from "./createDateArray";
-import { createMonthArray } from "./createMonthArray";
-import { createYearArray } from "./createYearArray";
-import { createInterAndTotArray } from "./createInterAndTotArray";
-import { parseData } from "./parseData";
+import { addMonths, format } from "date-fns";
 
 export const createData = (inputData) => {
-  //Parse form data to the correct format:
   console.log({ inputData });
-  const formData = parseData(inputData);
+  const { initialAmount, duration, initialContribution, rateOfReturn } =
+    inputData;
+  const data = [];
+  let contribution = initialContribution;
+  let totalAccumulated = initialAmount;
+  let accumulatedContribution = initialAmount;
 
-  const { duration, durationLen } = formData;
-  const monthArray = createMonthArray(duration, durationLen);
+  const durantionInMonths = 12 * duration;
+  for (let i = 1; i <= durantionInMonths; i++) {
+    contribution = getContribution(i, initialContribution);
+    accumulatedContribution = getAccumulatedContribution(
+      contribution,
+      accumulatedContribution,
+    );
+    totalAccumulated = getTotalAccumulated(
+      totalAccumulated,
+      rateOfReturn,
+      contribution,
+    );
 
-  const yearArray = createYearArray(monthArray);
-
-  const dateArray = createDateArray(monthArray);
-
-  const {
-    contribution,
-    inflation,
-    contributionInflationIncrease,
-    contributionIncrease,
-    contributionIncreaseValue,
-  } = formData;
-  const contributionArray = createContributionArray(
-    yearArray,
-    contribution,
-    contributionInflationIncrease,
-    inflation,
-    contributionIncrease,
-    contributionIncreaseValue,
-  );
-  console.log({ contributionArray });
-
-  const { initialAmount } = formData;
-  const accumulatedArray = createAccumArray(contributionArray, initialAmount);
-
-  const { rateOfReturn } = formData;
-  const { interestArray, totalArray } = createInterAndTotArray(
-    initialAmount,
-    rateOfReturn,
-    contributionArray,
-  );
-
-  const data = arrToObjArr(
-    monthArray,
-    yearArray,
-    dateArray,
-    contributionArray,
-    accumulatedArray,
-    interestArray,
-    totalArray,
-  );
+    const item = {
+      id: i,
+      month: getMonth(i),
+      contribution: contribution,
+      accumulated_contribution: accumulatedContribution,
+      total_accumulated: totalAccumulated,
+    };
+    data.push(item);
+  }
 
   return data;
 };
+
+function getMonth(id) {
+  const today = new Date();
+  return format(addMonths(today, id), "MMM-yyyy");
+}
+
+function getYear(id) {
+  const year = id % 12 !== 0 ? Math.floor(id / 12) : Math.floor(id / 12) - 1;
+  return year;
+}
+
+function getContribution(id, contribution, contribuitionIncrease = 0) {
+  if (contribuitionIncrease === 0) return contribution;
+
+  const year = getYear(id);
+  /*contribution *
+          (1 +
+            contributionInflationIncrease * inflation +
+            contributionIncrease * contributionIncreaseValue) **
+            year */
+  return contribution * (1 + contribuitionIncrease) ** year;
+}
+
+function getAccumulatedContribution(
+  currentContribution,
+  previousAccumulatedContribution,
+) {
+  return currentContribution + previousAccumulatedContribution;
+}
+
+function getTotalAccumulated(prevAccumulated, rateOfReturn, contribuition) {
+  const monthlyRateOfReturn = (1 + rateOfReturn) ** (1 / 12) - 1;
+
+  return prevAccumulated * (1 + monthlyRateOfReturn) + contribuition;
+}
